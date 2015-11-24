@@ -1,5 +1,4 @@
--- Let's start with the basics: get the diatonic of a given note
--- diatonic C Maj2 = D
+import qualified Data.Map as Map
 
 data Note = C | CsDb | D | DsEb | E | F | FsGb | G | GsAb | A | AsBb | B deriving (Read, Eq, Ord, Enum, Bounded)
 instance Show Note where
@@ -17,17 +16,18 @@ instance Show Note where
     show B = "B"
 data Diatonic = Unison | Min2 | Maj2 | Min3 | Maj3 | Per4 | Tritone | Per5 | Min6 | Maj6 | Min7 | Maj7 | Octave deriving (Read, Show, Eq, Ord, Enum, Bounded)
 
-getNotes :: Note -> [Note]
-getNotes root = take 13 $ dropWhile (/=root) $ cycle noteList
+listOfNotes :: Note -> [Note]
+listOfNotes root = take 13 $ dropWhile (/=root) $ cycle noteList
     where noteList :: [Note]
           noteList = [minBound..maxBound]
 
-getDiatonics :: [Diatonic]
-getDiatonics = [minBound..maxBound]
+listOfDiatonics :: [Diatonic]
+listOfDiatonics = [minBound..maxBound]
 
 mapDiatonics :: Note -> [(Diatonic, Note)]
-mapDiatonics root = zip getDiatonics $ getNotes root
+mapDiatonics root = zip listOfDiatonics $ listOfNotes root
+
+getDiatonicOf :: Note -> Diatonic -> Note
+getDiatonicOf root diat = foldl (\acc x -> if fst x == diat then snd x else acc) root $ mapDiatonics root
 
 
---diatonic :: Note -> Diatonic -> Note
---diatonic note diat = 
